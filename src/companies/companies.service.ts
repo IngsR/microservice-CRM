@@ -1,4 +1,43 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Company } from './entities/company.entity';
+import { CreateCompanyDto } from './dto/create-company.dto';
+import { UpdateCompanyDto } from './dto/update-company.dto';
 
 @Injectable()
-export class CompaniesService {}
+export class CompaniesService {
+  constructor(
+    @InjectRepository(Company)
+    private readonly companyRepository: Repository<Company>,
+  ) {}
+
+  create(createCompanyDto: CreateCompanyDto): Promise<Company> {
+    const company = this.companyRepository.create(createCompanyDto);
+    return this.companyRepository.save(company);
+  }
+
+  findAll(): Promise<Company[]> {
+    return this.companyRepository.find();
+  }
+
+  async findOne(id: number): Promise<Company> {
+    const company = await this.companyRepository.findOneBy({ id });
+    if (!company) {
+      throw new NotFoundException(`Company with ID "${id}" not found`);
+    }
+    return company;
+  }
+
+  async update(id: number, updateCompanyDto: UpdateCompanyDto): Promise<Company> {
+    await this.companyRepository.update(id, updateCompanyDto);
+    return this.findOne(id);
+  }
+
+  async remove(id: number): Promise<void> {
+    const result = await this.companyRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Company with ID "${id}" not found`);
+    }
+  }
+}
