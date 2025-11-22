@@ -57,4 +57,17 @@ export class UsersService {
       throw new NotFoundException(`User with ID "${id}" not found`);
     }
   }
+
+  async searchUsers(keyword: string): Promise<Omit<User, 'password_hash'>[]> {
+    const users = await this.userRepository.createQueryBuilder('user')
+      .where('user.firstName ILIKE :keyword', { keyword: `%${keyword}%` })
+      .orWhere('user.lastName ILIKE :keyword', { keyword: `%${keyword}%` })
+      .orWhere('user.email ILIKE :keyword', { keyword: `%${keyword}%` })
+      .getMany();
+    
+    return users.map(user => {
+      const { password_hash, ...result } = user;
+      return result;
+    });
+  }
 }

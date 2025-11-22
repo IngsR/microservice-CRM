@@ -62,4 +62,10 @@ export class DealsService {
       throw new NotFoundException(`Deal with ID "${id}" not found`);
     }
   }
+
+  async searchDeals(keyword: string): Promise<Deal[]> {
+    return this.dealRepository.createQueryBuilder('deal')
+      .where('deal.title ILIKE :keyword', { keyword: `%${keyword}%` })
+      .getMany();
+  }
 }

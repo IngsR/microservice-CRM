@@ -65,5 +65,13 @@ export class CustomersService {
       throw new NotFoundException(`Customer with ID "${id}" not found`);
     }
   }
+
+  async searchCustomers(keyword: string): Promise<Customer[]> {
+    return this.customerRepository.createQueryBuilder('customer')
+      .where('customer.firstName ILIKE :keyword', { keyword: `%${keyword}%` })
+      .orWhere('customer.lastName ILIKE :keyword', { keyword: `%${keyword}%` })
+      .orWhere('customer.email ILIKE :keyword', { keyword: `%${keyword}%` })
+      .getMany();
+  }
 }
 

@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { CustomersService } from './customers.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
@@ -42,5 +43,9 @@ export class CustomersController {
   remove(@Param('id') id: string) {
     return this.customersService.remove(+id);
   }
-}
+
+  @Get('search')
+  searchCustomers(@Query('keyword') keyword: string) {
+    return this.customersService.searchCustomers(keyword);
+  }
 

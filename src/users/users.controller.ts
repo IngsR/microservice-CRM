@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -39,4 +40,8 @@ export class UsersController {
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
   }
-}
+
+  @Get('search')
+  searchUsers(@Query('keyword') keyword: string) {
+    return this.usersService.searchUsers(keyword);
+  }

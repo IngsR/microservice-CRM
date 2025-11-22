@@ -34,10 +34,14 @@ export class CompaniesService {
     return this.findOne(id);
   }
 
-  async remove(id: number): Promise<void> {
-    const result = await this.companyRepository.delete(id);
-    if (result.affected === 0) {
-      throw new NotFoundException(`Company with ID "${id}" not found`);
-    }
+  remove(id: number) {
+    return `This action removes a #${id} company`;
+  }
+
+  async searchCompanies(keyword: string): Promise<Company[]> {
+    return this.companyRepository.createQueryBuilder('company')
+      .where('company.name ILIKE :keyword', { keyword: `%${keyword}%` })
+      .orWhere('company.address ILIKE :keyword', { keyword: `%${keyword}%` })
+      .getMany();
   }
 }

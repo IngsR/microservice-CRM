@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { DealsService } from './deals.service';
@@ -42,4 +43,8 @@ export class DealsController {
   remove(@Param('id') id: string) {
     return this.dealsService.remove(+id);
   }
-}
+
+  @Get('search')
+  searchDeals(@Query('keyword') keyword: string) {
+    return this.dealsService.searchDeals(keyword);
+  }

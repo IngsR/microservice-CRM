@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
@@ -37,9 +37,12 @@ export class CompaniesController {
   }
 
   @Delete(':id')
-  @Roles(Role.ADMIN)
-  @UseGuards(RolesGuard)
   remove(@Param('id') id: string) {
     return this.companiesService.remove(+id);
+  }
+
+  @Get('search')
+  searchCompanies(@Query('keyword') keyword: string) {
+    return this.companiesService.searchCompanies(keyword);
   }
 }
