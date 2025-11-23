@@ -1,4 +1,4 @@
-# Fullstack CRM/ERP Monorepo (NestJS + Next.js)
+# Fullstack CRM Monorepo (NestJS + Next.js)
 
 Selamat datang di repository project **Fullstack CRM/ERP**. Project ini adalah aplikasi web modern yang dibangun menggunakan arsitektur **Monorepo** untuk menggabungkan kekuatan **NestJS** (Backend) dan **Next.js** (Frontend) dalam satu workflow pengembangan yang efisien.
 
