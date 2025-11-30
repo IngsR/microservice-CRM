@@ -9,7 +9,7 @@ import { useState } from 'react';
 
 export default function LoginPage() {
     const router = useRouter();
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -21,11 +21,11 @@ export default function LoginPage() {
         setError('');
 
         try {
-            const res = await authService.login({ username, password });
+            const res = await authService.login({ email, password });
             Cookies.set('token', res.access_token, { expires: 1 });
             router.push('/dashboard');
         } catch (err: any) {
-            setError('Invalid username or password');
+            setError('Invalid email or password');
         } finally {
             setLoading(false);
         }
@@ -119,7 +119,6 @@ export default function LoginPage() {
                     </div>
                 </div>
 
-                {/* Decorative elements */}
                 <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
                 <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
             </div>
@@ -148,29 +147,27 @@ export default function LoginPage() {
                     </div>
 
                     <form onSubmit={handleLogin} className="space-y-6">
-                        {/* Username Input */}
+                        {/* Email Input */}
                         <div className="space-y-2">
                             <label
-                                htmlFor="username"
+                                htmlFor="email"
                                 className="block text-sm font-medium text-gray-700"
                             >
-                                Username
+                                Email Address
                             </label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                     <User className="h-5 w-5 text-gray-400" />
                                 </div>
                                 <input
-                                    id="username"
-                                    name="username"
-                                    type="text"
+                                    id="email"
+                                    name="email"
+                                    type="email"
                                     required
-                                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                                    placeholder="Enter your username"
-                                    value={username}
-                                    onChange={(e) =>
-                                        setUsername(e.target.value)
-                                    }
+                                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+                                    placeholder="you@example.com"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                 />
                             </div>
                         </div>
@@ -192,7 +189,7 @@ export default function LoginPage() {
                                     name="password"
                                     type={showPassword ? 'text' : 'password'}
                                     required
-                                    className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                                    className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
                                     placeholder="Enter your password"
                                     value={password}
                                     onChange={(e) =>
@@ -204,7 +201,7 @@ export default function LoginPage() {
                                     onClick={() =>
                                         setShowPassword(!showPassword)
                                     }
-                                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 transition-colors"
                                 >
                                     {showPassword ? (
                                         <EyeOff className="h-5 w-5" />
@@ -234,8 +231,8 @@ export default function LoginPage() {
                                 </span>
                             </label>
                             <Link
-                                href="#"
-                                className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                                href="/forgot-password"
+                                className="text-sm font-medium text-indigo-600 hover:text-indigo-500 transition-colors"
                             >
                                 Forgot password?
                             </Link>
@@ -245,7 +242,7 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="group relative w-full flex justify-center items-center gap-2 py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                            className="group relative w-full flex justify-center items-center gap-2 py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
                         >
                             {loading ? (
                                 <>

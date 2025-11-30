@@ -1,17 +1,21 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { MailService } from '../common/services/mail.service';
+import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { UsersModule } from '../users/users.module';
-import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { LocalStrategy } from './local.strategy';
+import { PasswordResetToken } from './entities/password-reset-token.entity';
 import { JwtStrategy } from './jwt.strategy';
+import { LocalStrategy } from './local.strategy';
 
 @Module({
   imports: [
     UsersModule,
     PassportModule,
+    TypeOrmModule.forFeature([PasswordResetToken]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -22,6 +26,7 @@ import { JwtStrategy } from './jwt.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy, MailService],
+  exports: [AuthService], // Export AuthService if needed
 })
 export class AuthModule {}

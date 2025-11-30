@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { User } from './entities/user.entity';
+import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
@@ -13,11 +13,16 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<Omit<User, 'password_hash'>> {
+  async create(
+    createUserDto: CreateUserDto,
+  ): Promise<Omit<User, 'password_hash'>> {
     const salt = await bcrypt.genSalt();
     const password_hash = await bcrypt.hash(createUserDto.password, salt);
 
-    const newUser = this.userRepository.create({ ...createUserDto, password_hash });
+    const newUser = this.userRepository.create({
+      ...createUserDto,
+      password_hash,
+    });
     const savedUser = await this.userRepository.save(newUser);
 
     const { password_hash: _, ...result } = savedUser;
@@ -26,7 +31,7 @@ export class UsersService {
 
   async findAll(): Promise<Omit<User, 'password_hash'>[]> {
     const users = await this.userRepository.find();
-    return users.map(user => {
+    return users.map((user) => {
       const { password_hash, ...result } = user;
       return result;
     });
@@ -46,7 +51,10 @@ export class UsersService {
     return this.userRepository.findOneBy({ email });
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<Omit<User, 'password_hash'>> {
+  async update(
+    id: number,
+    updateUserDto: UpdateUserDto,
+  ): Promise<Omit<User, 'password_hash'>> {
     await this.userRepository.update(id, updateUserDto);
     return this.findOne(id);
   }
@@ -59,15 +67,20 @@ export class UsersService {
   }
 
   async searchUsers(keyword: string): Promise<Omit<User, 'password_hash'>[]> {
-    const users = await this.userRepository.createQueryBuilder('user')
+    const users = await this.userRepository
+      .createQueryBuilder('user')
       .where('user.firstName ILIKE :keyword', { keyword: `%${keyword}%` })
       .orWhere('user.lastName ILIKE :keyword', { keyword: `%${keyword}%` })
       .orWhere('user.email ILIKE :keyword', { keyword: `%${keyword}%` })
       .getMany();
-    
-    return users.map(user => {
+
+    return users.map((user) => {
       const { password_hash, ...result } = user;
       return result;
     });
+  }
+
+  async updatePassword(id: number, newPasswordHash: string): Promise<void> {
+    await this.userRepository.update(id, { password_hash: newPasswordHash });
   }
 }

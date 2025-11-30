@@ -18,7 +18,8 @@ import { useState } from 'react';
 export default function RegisterPage() {
     const router = useRouter();
     const [formData, setFormData] = useState({
-        username: '',
+        firstName: '',
+        lastName: '',
         email: '',
         password: '',
         confirmPassword: '',
@@ -41,11 +42,35 @@ export default function RegisterPage() {
         }
 
         setLoading(true);
-        // TODO: Implement register API call
-        setTimeout(() => {
-            setLoading(false);
+
+        try {
+            // Call register API
+            const response = await fetch('/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    firstName: formData.firstName,
+                    lastName: formData.lastName,
+                    email: formData.email,
+                    password: formData.password,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Registration failed');
+            }
+
+            // Successfully registered, redirect to login
             router.push('/login');
-        }, 1500);
+        } catch (err: any) {
+            setError(err.message || 'Something went wrong. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -74,26 +99,51 @@ export default function RegisterPage() {
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-5">
-                        {/* Username */}
+                        {/* First Name */}
                         <div className="space-y-2">
                             <label
-                                htmlFor="username"
+                                htmlFor="firstName"
                                 className="block text-sm font-medium text-gray-700"
                             >
-                                Username
+                                First Name
                             </label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                     <User className="h-5 w-5 text-gray-400" />
                                 </div>
                                 <Input
-                                    id="username"
-                                    name="username"
+                                    id="firstName"
+                                    name="firstName"
                                     type="text"
                                     required
                                     className="pl-10"
-                                    placeholder="Choose a username"
-                                    value={formData.username}
+                                    placeholder="Enter your first name"
+                                    value={formData.firstName}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Last Name */}
+                        <div className="space-y-2">
+                            <label
+                                htmlFor="lastName"
+                                className="block text-sm font-medium text-gray-700"
+                            >
+                                Last Name
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <User className="h-5 w-5 text-gray-400" />
+                                </div>
+                                <Input
+                                    id="lastName"
+                                    name="lastName"
+                                    type="text"
+                                    required
+                                    className="pl-10"
+                                    placeholder="Enter your last name"
+                                    value={formData.lastName}
                                     onChange={handleChange}
                                 />
                             </div>

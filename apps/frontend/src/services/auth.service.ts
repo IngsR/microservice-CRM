@@ -1,9 +1,8 @@
 import api from '@/lib/api';
-import { LoginDto, LoginResponse } from '@/types/auth';
 
 export const authService = {
-    login: async (data: LoginDto): Promise<LoginResponse> => {
-        const response = await api.post<LoginResponse>('/auth/login', data);
+    async login(credentials: { email: string; password: string }) {
+        const response = await api.post('/auth/login', credentials);
         return response.data;
     },
 };
